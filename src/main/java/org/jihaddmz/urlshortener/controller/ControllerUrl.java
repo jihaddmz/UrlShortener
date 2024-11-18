@@ -1,5 +1,6 @@
 package org.jihaddmz.urlshortener.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
 import org.jihaddmz.urlshortener.business.ServiceUrl;
 import org.jihaddmz.urlshortener.model.ModelUrl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,7 @@ public class ControllerUrl {
     @Autowired
     private ServiceUrl serviceUrl;
 
+    @Operation(description = "Creating a short url for the provided long one")
     @PostMapping
     public String createShortUrl(@RequestParam String longUrl) {
         return serviceUrl.saveShortUrl(longUrl);

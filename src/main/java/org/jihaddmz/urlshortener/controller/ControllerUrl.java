@@ -1,6 +1,8 @@
 package org.jihaddmz.urlshortener.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.http.HttpServletRequest;
 import org.jihaddmz.urlshortener.business.ServiceUrl;
 import org.jihaddmz.urlshortener.model.ModelUrl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,16 +13,20 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/url")
 public class ControllerUrl {
 
     @Autowired
     private ServiceUrl serviceUrl;
 
+    @Autowired
+    private ServletContext servletContext;
+
     @Operation(description = "Creating a short url for the provided long one")
-    @PostMapping
-    public String createShortUrl(@RequestParam String longUrl) {
-        return serviceUrl.saveShortUrl(longUrl);
+    @PostMapping("/api/url")
+    public String createShortUrl(@RequestParam String longUrl, HttpServletRequest request) {
+        String baseUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + servletContext.getContextPath();
+
+        return baseUrl +"/" + serviceUrl.saveShortUrl(longUrl);
     }
 
     @GetMapping("/{shorturl}")
@@ -31,7 +37,7 @@ public class ControllerUrl {
                 .build();
     }
 
-    @GetMapping
+    @GetMapping("/api/url")
     public List<ModelUrl> findAll() {
         return serviceUrl.findAll();
     }

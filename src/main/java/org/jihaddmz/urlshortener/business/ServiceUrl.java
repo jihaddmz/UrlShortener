@@ -17,13 +17,15 @@ public class ServiceUrl {
     private RepoUrl repoUrl;
 
     public String saveShortUrl(String originalUrl) {
-        String shortUrl = UUID.randomUUID().toString().substring(0, 6); // Generate a random 6-character string
+        Optional<ModelUrl> modelUrl = repoUrl.findByOriginalUrl(originalUrl);
 
-        if (repoUrl.findByShortenedUrl(shortUrl).isEmpty()) {
+        if (modelUrl.isEmpty()) {
+            String shortUrl = UUID.randomUUID().toString().substring(0, 6); // Generate a random 6-character string
             repoUrl.save(new ModelUrl(originalUrl, shortUrl));
+            return shortUrl;
         }
 
-        return shortUrl;
+        return modelUrl.get().getShortenedUrl();
     }
 
     public String findOriginalUrl(String shortUrl) {
